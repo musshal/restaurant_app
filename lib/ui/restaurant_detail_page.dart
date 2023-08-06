@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/data/model/local_restaurant.dart';
+import 'package:restaurant_app/data/model/restaurant.dart';
 
-class RestaurantDetailPage extends StatelessWidget {
+class RestaurantDetailPage extends StatefulWidget {
   static const routeName = '/restaurant_detail';
 
   final Restaurant restaurant;
@@ -9,17 +9,25 @@ class RestaurantDetailPage extends StatelessWidget {
   const RestaurantDetailPage({super.key, required this.restaurant});
 
   @override
+  State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
+}
+
+class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
+  bool isReadMore = false;
+  int maxLine = 2;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(restaurant.name),
+        title: Text(widget.restaurant.name),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Hero(
-              tag: restaurant.pictureId,
-              child: Image.network(restaurant.pictureId)
+              tag: widget.restaurant.pictureId,
+              child: Image.network(widget.restaurant.pictureId)
             ),
             Padding(padding: const EdgeInsets.all(20),
             child: Column(
@@ -35,7 +43,7 @@ class RestaurantDetailPage extends StatelessWidget {
                             size: 15,
                           ),
                           const SizedBox(width: 5),
-                          Text(restaurant.city)
+                          Text(widget.restaurant.city)
                         ]
                     ),
                     const Spacer(),
@@ -47,7 +55,7 @@ class RestaurantDetailPage extends StatelessWidget {
                           size: 15,
                         ),
                         const SizedBox(width: 5),
-                        Text(restaurant.rating.toString())
+                        Text(widget.restaurant.rating.toString())
                       ],
                     )
                   ],
@@ -57,7 +65,32 @@ class RestaurantDetailPage extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                Text(restaurant.description),
+                Text(
+                  widget.restaurant.description,
+                  maxLines: maxLine,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            isReadMore = !isReadMore;
+
+                            if (!isReadMore) {
+                              maxLine = 2;
+                            } else {
+                              maxLine = 50;
+                            }
+                          });
+                        },
+                        child: Text(isReadMore ? 'Read less' : 'Read more')
+                    ),
+                  )
+                ),
                 const Divider(color: Colors.grey,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,16 +104,16 @@ class RestaurantDetailPage extends StatelessWidget {
                       children: [
                         const Text('Foods:'),
                         Text(
-                          restaurant.menus.foods
-                              .map((foods) => foods.name)
+                          widget.restaurant.menus.foods
+                              .map((food) => food.name)
                               .toString(),
                         ),
                         const SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
                         const Text('Drinks:'),
                         Text(
-                          restaurant.menus.drinks
+                          widget.restaurant.menus.drinks
                               .map((drink) => drink.name)
                               .toString(),
                         ),

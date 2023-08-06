@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         activeColor: secondaryColor,
         items: _bottomNavBarItems
       ),
-      tabBuilder: (context, index) {
+      tabBuilder: (_, index) {
         switch (index) {
           case 1:
             return const RestaurantFavoritePage();
