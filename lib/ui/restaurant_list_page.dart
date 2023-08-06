@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_app/ui/restaurant_detail_page.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
 
-import '../data/model/local_restaurant.dart';
+import '../data/model/restaurant.dart';
 
 class RestaurantListPage extends StatelessWidget {
   static const routeName = '/restaurant_list';
@@ -19,7 +19,7 @@ class RestaurantListPage extends StatelessWidget {
     return FutureBuilder<String>(
       future: DefaultAssetBundle.of(context).loadString('assets/local_restaurant.json'),
       builder: (context, snapshot) {
-        final List<Restaurant> restaurants = parseRestaurant(snapshot.data);
+        List<Restaurant> restaurants = parseRestaurant(snapshot.data);
         return ListView.builder(
             itemCount: restaurants.length,
             itemBuilder: (context, index) {
