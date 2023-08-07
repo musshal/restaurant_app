@@ -1,132 +1,237 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/data/model/restaurant.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/data/model/get_detail_restaurant_result.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   static const routeName = '/restaurant_detail';
 
-  final Restaurant restaurant;
+  final String id;
 
-  const RestaurantDetailPage({super.key, required this.restaurant});
+  const RestaurantDetailPage({super.key, required this.id});
 
   @override
   State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
+  late Future<GetDetailRestaurantResult> _restaurant;
+
+  final _baseUrl = 'https://restaurant-api.dicoding.dev/images/large';
+
   bool isReadMore = false;
   int maxLine = 2;
 
   @override
+  void initState() {
+    super.initState();
+    _restaurant = ApiService().getDetailRestaurant(widget.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.restaurant.name),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Hero(
-              tag: widget.restaurant.pictureId,
-              child: Image.network(widget.restaurant.pictureId)
-            ),
-            Padding(padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    return FutureBuilder<GetDetailRestaurantResult>(
+      future: _restaurant,
+      builder: (context, AsyncSnapshot<GetDetailRestaurantResult> snapshot) {
+        var state = snapshot.connectionState;
+        if (state != ConnectionState.done) {
+          return const Material(
+            child: Center(
+                child: CircularProgressIndicator(
+              color: Colors.blue,
+            )),
+          );
+        } else {
+          if (snapshot.hasData) {
+            var restaurant = snapshot.data?.restaurant;
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(restaurant!.name),
+              ),
+              body: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Row(
+                    Hero(
+                        tag: restaurant.pictureId,
+                        child:
+                            Image.network('$_baseUrl/${restaurant.pictureId}')),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.location_pin,
-                            color: Colors.red,
-                            size: 15,
+                          Row(
+                            children: [
+                              Row(children: [
+                                const Icon(
+                                  Icons.location_pin,
+                                  color: Colors.red,
+                                  size: 15,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                    '${restaurant.address}, ${restaurant.city}')
+                              ]),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.yellow,
+                                    size: 15,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(restaurant.rating.toString())
+                                ],
+                              )
+                            ],
                           ),
-                          const SizedBox(width: 5),
-                          Text(widget.restaurant.city)
-                        ]
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.star,
-                          color: Colors.yellow,
-                          size: 15,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(widget.restaurant.rating.toString())
-                      ],
+                          const Divider(color: Colors.grey),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Description',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            restaurant.description,
+                            maxLines: maxLine,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isReadMore = !isReadMore;
+
+                                        if (!isReadMore) {
+                                          maxLine = 2;
+                                        } else {
+                                          maxLine = 50;
+                                        }
+                                      });
+                                    },
+                                    child: Text(isReadMore
+                                        ? 'Read less'
+                                        : 'Read more')),
+                              )),
+                          const Divider(
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Menu',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    const Text('Foods:'),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: restaurant.menus.foods.length,
+                                      itemBuilder: (_, index) {
+                                        return Align(
+                                          alignment: Alignment.center,
+                                          child: Text(restaurant
+                                              .menus.foods[index].name),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                  child: Column(
+                                children: [
+                                  const Text('Drinks:'),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: restaurant.menus.drinks.length,
+                                    itemBuilder: (_, index) {
+                                      return Align(
+                                        alignment: Alignment.center,
+                                        child: Text(restaurant
+                                            .menus.drinks[index].name),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ))
+                            ],
+                          ),
+                          const Divider(color: Colors.grey),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Customer Review',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: restaurant.customerReviews.length,
+                            itemBuilder: (_, index) {
+                              return Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                        restaurant.customerReviews[index].name),
+                                    Text(
+                                        restaurant.customerReviews[index].date),
+                                    Text(restaurant
+                                        .customerReviews[index].review),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
-                const Divider(color: Colors.grey),
-                const Text('Deskripsi:'),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.restaurant.description,
-                  maxLines: maxLine,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isReadMore = !isReadMore;
-
-                            if (!isReadMore) {
-                              maxLine = 2;
-                            } else {
-                              maxLine = 50;
-                            }
-                          });
-                        },
-                        child: Text(isReadMore ? 'Read less' : 'Read more')
-                    ),
-                  )
-                ),
-                const Divider(color: Colors.grey,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Menu:'),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Foods:'),
-                        Text(
-                          widget.restaurant.menus.foods
-                              .map((food) => food.name)
-                              .toString(),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Drinks:'),
-                        Text(
-                          widget.restaurant.menus.drinks
-                              .map((drink) => drink.name)
-                              .toString(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            )
-          ],
-        ),
-      ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return const Material(
+                child: Center(child: Text('Gagal memuat data!')));
+          } else {
+            return const Material(child: Text(''));
+          }
+        }
+      },
     );
   }
 }
