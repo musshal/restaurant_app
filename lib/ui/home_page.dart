@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/styles.dart';
+import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/ui/restaurant_favorite_page.dart';
 import 'package:restaurant_app/ui/restaurant_list_page.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
+
+import '../data/api/api_service.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home_page';
@@ -43,9 +47,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildIos(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
-        activeColor: secondaryColor,
-        items: _bottomNavBarItems
-      ),
+          activeColor: secondaryColor, items: _bottomNavBarItems),
       tabBuilder: (_, index) {
         switch (index) {
           case 1:
@@ -69,7 +71,10 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<Widget> _listWidget = [
-    const RestaurantListPage(),
+    ChangeNotifierProvider(
+      create: (_) => RestaurantProvider(apiService: ApiService()),
+      child: const RestaurantListPage(),
+    ),
     const RestaurantFavoritePage(),
   ];
 }
