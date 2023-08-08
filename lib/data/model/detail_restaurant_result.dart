@@ -3,16 +3,16 @@ import 'package:restaurant_app/data/model/detail_restaurant_customer_review_resu
 import 'package:restaurant_app/data/model/detail_restaurant_menu_result.dart';
 
 class DetailRestaurantResult {
-  String id;
-  String name;
-  String description;
-  String city;
-  String address;
-  String pictureId;
-  List<DetailRestaurantCategoryResult> categories;
-  DetailRestaurantMenuResult menus;
-  double rating;
-  List<DetailRestaurantCustomerReviewResult> customerReviews;
+  final String id;
+  final String name;
+  final String description;
+  final String city;
+  final String address;
+  final String pictureId;
+  final List<DetailRestaurantCategoryResult> categories;
+  final DetailRestaurantMenuResult menus;
+  final double rating;
+  final List<DetailRestaurantCustomerReviewResult> customerReviews;
 
   DetailRestaurantResult({
     required this.id,

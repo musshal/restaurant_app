@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/provider/get_list_restaurant_provider.dart';
 import 'package:restaurant_app/ui/restaurant_search.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
@@ -15,7 +15,7 @@ class RestaurantListPage extends StatefulWidget {
 
 class _RestaurantListPageState extends State<RestaurantListPage> {
   Widget _buildList(BuildContext context) {
-    return Consumer<RestaurantProvider>(
+    return Consumer<GetListRestaurantProvider>(
       builder: (context, state, _) {
         if (state.state == ResultState.loading) {
           return const Center(

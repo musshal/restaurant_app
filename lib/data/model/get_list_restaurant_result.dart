@@ -1,10 +1,10 @@
 import 'package:restaurant_app/data/model/restaurant_result.dart';
 
 class GetListRestaurantResult {
-  bool error;
-  String message;
-  int count;
-  List<RestaurantResult> restaurants;
+  final bool error;
+  final String message;
+  final int count;
+  final List<RestaurantResult> restaurants;
 
   GetListRestaurantResult({
     required this.error,

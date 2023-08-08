@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
-import 'package:restaurant_app/data/model/get_detail_restaurant_result.dart';
+import 'package:restaurant_app/provider/get_detail_restaurant_provider.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   static const routeName = '/restaurant_detail';
@@ -14,38 +15,27 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  late Future<GetDetailRestaurantResult> _restaurant;
-
   final _baseUrl = 'https://restaurant-api.dicoding.dev/images/large';
-
-  bool isReadMore = false;
-  int maxLine = 2;
-
-  @override
-  void initState() {
-    super.initState();
-    _restaurant = ApiService().getDetailRestaurant(widget.id);
-  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<GetDetailRestaurantResult>(
-      future: _restaurant,
-      builder: (context, AsyncSnapshot<GetDetailRestaurantResult> snapshot) {
-        var state = snapshot.connectionState;
-        if (state != ConnectionState.done) {
-          return const Material(
-            child: Center(
-                child: CircularProgressIndicator(
-              color: Colors.blue,
-            )),
-          );
-        } else {
-          if (snapshot.hasData) {
-            var restaurant = snapshot.data?.restaurant;
+    return ChangeNotifierProvider<GetDetailRestaurantProvider>(
+      create: (context) =>
+          GetDetailRestaurantProvider(apiService: ApiService(), id: widget.id),
+      child: Consumer<GetDetailRestaurantProvider>(
+        builder: (context, state, _) {
+          if (state.state == ResultState.loading) {
+            return const Material(
+              child: Center(
+                  child: CircularProgressIndicator(
+                color: Colors.blue,
+              )),
+            );
+          } else if (state.state == ResultState.hasData) {
+            var restaurant = state.result.restaurant;
             return Scaffold(
               appBar: AppBar(
-                title: Text(restaurant!.name),
+                title: Text(restaurant.name),
               ),
               body: SingleChildScrollView(
                 child: Column(
@@ -82,9 +72,34 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                   const SizedBox(width: 5),
                                   Text(restaurant.rating.toString())
                                 ],
-                              )
+                              ),
                             ],
                           ),
+                          const Divider(color: Colors.grey),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Categories',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: restaurant.categories.length,
+                              itemBuilder: (_, index) {
+                                return Align(
+                                  alignment: Alignment.center,
+                                  child:
+                                      Text(restaurant.categories[index].name),
+                                );
+                              }),
                           const Divider(color: Colors.grey),
                           const SizedBox(
                             height: 10,
@@ -99,32 +114,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            restaurant.description,
-                            maxLines: maxLine,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        isReadMore = !isReadMore;
-
-                                        if (!isReadMore) {
-                                          maxLine = 2;
-                                        } else {
-                                          maxLine = 50;
-                                        }
-                                      });
-                                    },
-                                    child: Text(isReadMore
-                                        ? 'Read less'
-                                        : 'Read more')),
-                              )),
+                          Text(restaurant.description),
                           const Divider(
                             color: Colors.grey,
                           ),
@@ -224,14 +214,17 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 ),
               ),
             );
-          } else if (snapshot.hasError) {
+          } else if (state.state == ResultState.noData) {
+            return const Material(
+                child: Center(child: Text('Gagal memuat data!')));
+          } else if (state.state == ResultState.error) {
             return const Material(
                 child: Center(child: Text('Gagal memuat data!')));
           } else {
             return const Material(child: Text(''));
           }
-        }
-      },
+        },
+      ),
     );
   }
 }

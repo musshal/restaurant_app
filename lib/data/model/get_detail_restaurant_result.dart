@@ -1,9 +1,9 @@
 import 'package:restaurant_app/data/model/detail_restaurant_result.dart';
 
 class GetDetailRestaurantResult {
-  bool error;
-  String message;
-  DetailRestaurantResult restaurant;
+  final bool error;
+  final String message;
+  final DetailRestaurantResult restaurant;
 
   GetDetailRestaurantResult({
     required this.error,

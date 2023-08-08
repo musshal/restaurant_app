@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/styles.dart';
-import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/provider/get_list_restaurant_provider.dart';
 import 'package:restaurant_app/ui/restaurant_favorite_page.dart';
 import 'package:restaurant_app/ui/restaurant_list_page.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _listWidget = [
     ChangeNotifierProvider(
-      create: (_) => RestaurantProvider(apiService: ApiService()),
+      create: (_) => GetListRestaurantProvider(apiService: ApiService()),
       child: const RestaurantListPage(),
     ),
     const RestaurantFavoritePage(),
