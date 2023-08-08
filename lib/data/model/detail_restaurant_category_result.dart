@@ -1,5 +1,5 @@
 class DetailRestaurantCategoryResult {
-  String name;
+  final String name;
 
   DetailRestaurantCategoryResult({required this.name});
 

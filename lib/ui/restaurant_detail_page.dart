@@ -17,9 +17,6 @@ class RestaurantDetailPage extends StatefulWidget {
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   final _baseUrl = 'https://restaurant-api.dicoding.dev/images/large';
 
-  bool isReadMore = false;
-  int maxLine = 2;
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GetDetailRestaurantProvider>(
@@ -117,32 +114,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            restaurant.description,
-                            maxLines: maxLine,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        isReadMore = !isReadMore;
-
-                                        if (!isReadMore) {
-                                          maxLine = 2;
-                                        } else {
-                                          maxLine = 50;
-                                        }
-                                      });
-                                    },
-                                    child: Text(isReadMore
-                                        ? 'Read less'
-                                        : 'Read more')),
-                              )),
+                          Text(restaurant.description),
                           const Divider(
                             color: Colors.grey,
                           ),

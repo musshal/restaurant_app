@@ -1,9 +1,9 @@
 import 'package:restaurant_app/data/model/restaurant_result.dart';
 
 class SearchRestaurantResult {
-  bool error;
-  int founded;
-  List<RestaurantResult> restaurants;
+  final bool error;
+  final int founded;
+  final List<RestaurantResult> restaurants;
 
   SearchRestaurantResult({
     required this.error,

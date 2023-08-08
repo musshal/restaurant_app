@@ -1,10 +1,10 @@
 class RestaurantResult {
-  String id;
-  String name;
-  String description;
-  String pictureId;
-  String city;
-  double rating;
+  final String id;
+  final String name;
+  final String description;
+  final String pictureId;
+  final String city;
+  final double rating;
 
   RestaurantResult({
     required this.id,

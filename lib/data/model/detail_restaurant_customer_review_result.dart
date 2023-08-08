@@ -1,7 +1,7 @@
 class DetailRestaurantCustomerReviewResult {
-  String name;
-  String review;
-  String date;
+  final String name;
+  final String review;
+  final String date;
 
   DetailRestaurantCustomerReviewResult({
     required this.name,

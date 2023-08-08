@@ -10,7 +10,6 @@ class RestaurantSearch extends SearchDelegate {
     return [
       IconButton(
           onPressed: () {
-            query:
             '';
           },
           icon: const Icon(Icons.search))
