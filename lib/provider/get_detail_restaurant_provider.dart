@@ -1,44 +1,45 @@
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
-import 'package:restaurant_app/data/model/get_list_restaurant_result.dart';
+import 'package:restaurant_app/data/model/get_detail_restaurant_result.dart';
 
 enum ResultState { loading, noData, hasData, error }
 
-class RestaurantProvider extends ChangeNotifier {
+class GetDetailRestaurantProvider extends ChangeNotifier {
   final ApiService apiService;
+  final String id;
 
-  RestaurantProvider({required this.apiService}) {
-    _fetchAllRestaurant();
+  GetDetailRestaurantProvider({required this.apiService, required this.id}) {
+    _fetchDetailRestaurant(id);
   }
 
-  late GetListRestaurantResult _restaurantsResult;
+  late GetDetailRestaurantResult _detailRestaurantResult;
   late ResultState _state;
   String _message = '';
 
   String get message => _message;
 
-  GetListRestaurantResult get result => _restaurantsResult;
+  GetDetailRestaurantResult get result => _detailRestaurantResult;
 
   ResultState get state => _state;
 
-  Future<dynamic> _fetchAllRestaurant() async {
+  Future<dynamic> _fetchDetailRestaurant(id) async {
     try {
       _state = ResultState.loading;
       notifyListeners();
-      final restaurant = await apiService.getListRestaurant();
-      if (restaurant.restaurants.isEmpty) {
+      final response = await apiService.getDetailRestaurant(id);
+      if (response.error) {
         _state = ResultState.noData;
         notifyListeners();
         return _message = 'Empty Data';
       } else {
         _state = ResultState.hasData;
         notifyListeners();
-        return _restaurantsResult = restaurant;
+        return _detailRestaurantResult = response;
       }
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();
-      return _message = 'Error --> $e';
+      return _message = e.toString();
     }
   }
 }
