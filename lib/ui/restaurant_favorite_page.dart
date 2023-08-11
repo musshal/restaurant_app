@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/provider/database_provider.dart';
+import 'package:restaurant_app/utils/result_state.dart';
+import 'package:restaurant_app/widgets/card_restaurant.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
 
 class RestaurantFavoritePage extends StatelessWidget {
@@ -11,9 +15,21 @@ class RestaurantFavoritePage extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    return const Center(
-      child: Text('Coming soon!'),
-    );
+    return Consumer<DatabaseProvider>(builder: (context, provider, child) {
+      if (provider.state == ResultState.hasData) {
+        return ListView.builder(
+            itemCount: provider.favorites.length,
+            itemBuilder: (context, index) {
+              return CardRestaurant(restaurant: provider.favorites[index]);
+            });
+      } else {
+        return Center(
+          child: Material(
+            child: Text(provider.message),
+          ),
+        );
+      }
+    });
   }
 
   Widget _buildAndroid(BuildContext context) {
