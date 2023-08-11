@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/styles.dart';
-import 'package:restaurant_app/provider/get_list_restaurant_provider.dart';
+import 'package:restaurant_app/ui/restaurant_detail_page.dart';
 import 'package:restaurant_app/ui/restaurant_favorite_page.dart';
 import 'package:restaurant_app/ui/restaurant_list_page.dart';
+import 'package:restaurant_app/ui/settings_page.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
 
-import '../data/api/api_service.dart';
+import '../utils/notification_helper.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home_page';
@@ -22,6 +22,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _bottomNavIndex = 0;
+
+  final NotificationHelper _notificationHelper = NotificationHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,8 @@ class _HomePageState extends State<HomePage> {
         switch (index) {
           case 1:
             return const RestaurantFavoritePage();
+          case 2:
+            return const SettingsPage();
           default:
             return const RestaurantListPage();
         }
@@ -65,16 +69,32 @@ class _HomePageState extends State<HomePage> {
       label: "Home",
     ),
     BottomNavigationBarItem(
-      icon: Icon(Platform.isIOS ? CupertinoIcons.settings : Icons.favorite),
+      icon: Icon(
+          Platform.isIOS ? CupertinoIcons.square_favorites : Icons.favorite),
       label: "Favorite",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Platform.isIOS ? CupertinoIcons.settings : Icons.settings),
+      label: "Settings",
     ),
   ];
 
   final List<Widget> _listWidget = [
-    ChangeNotifierProvider(
-      create: (_) => GetListRestaurantProvider(apiService: ApiService()),
-      child: const RestaurantListPage(),
-    ),
+    const RestaurantListPage(),
     const RestaurantFavoritePage(),
+    const SettingsPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationHelper.configureSelectNotificationSubject(
+        context, RestaurantDetailPage.routeName);
+  }
+
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
+  }
 }

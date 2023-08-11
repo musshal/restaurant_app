@@ -3,25 +3,22 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/get_detail_restaurant_provider.dart';
 
-class RestaurantDetailPage extends StatefulWidget {
+import '../utils/result_state.dart';
+
+class RestaurantDetailPage extends StatelessWidget {
   static const routeName = '/restaurant_detail';
 
   final String id;
 
   const RestaurantDetailPage({super.key, required this.id});
 
-  @override
-  State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
-}
-
-class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   final _baseUrl = 'https://restaurant-api.dicoding.dev/images/large';
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GetDetailRestaurantProvider>(
       create: (context) =>
-          GetDetailRestaurantProvider(apiService: ApiService(), id: widget.id),
+          GetDetailRestaurantProvider(apiService: ApiService(), id: id),
       child: Consumer<GetDetailRestaurantProvider>(
         builder: (context, state, _) {
           if (state.state == ResultState.loading) {

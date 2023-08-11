@@ -6,6 +6,8 @@ import 'package:restaurant_app/ui/restaurant_search.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
 import 'package:restaurant_app/widgets/platform_widget.dart';
 
+import '../utils/result_state.dart';
+
 class RestaurantListPage extends StatefulWidget {
   const RestaurantListPage({super.key});
 

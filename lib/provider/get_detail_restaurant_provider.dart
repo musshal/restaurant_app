@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/get_detail_restaurant_result.dart';
 
-enum ResultState { loading, noData, hasData, error }
+import '../utils/result_state.dart';
 
 class GetDetailRestaurantProvider extends ChangeNotifier {
   final ApiService apiService;

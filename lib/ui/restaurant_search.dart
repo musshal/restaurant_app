@@ -4,6 +4,8 @@ import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/search_restaurant_provider.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
 
+import '../utils/result_state.dart';
+
 class RestaurantSearch extends SearchDelegate {
   @override
   List<Widget>? buildActions(BuildContext context) {
