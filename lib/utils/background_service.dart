@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -28,7 +29,7 @@ class BackgroundService {
   static Future<void> callback() async {
     print('Alarm fired!');
     final NotificationHelper notificationHelper = NotificationHelper();
-    var result = await ApiService().getListRestaurant();
+    var result = await ApiService(client: http.Client()).getListRestaurant();
     await notificationHelper.showNotification(
         flutterLocalNotificationsPlugin, result);
 

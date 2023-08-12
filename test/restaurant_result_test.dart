@@ -1,25 +1,21 @@
+import 'package:http/http.dart' as http;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
-import 'package:restaurant_app/data/model/restaurant_result.dart';
-import 'package:restaurant_app/provider/get_list_restaurant_provider.dart';
+import 'package:restaurant_app/data/model/get_list_restaurant_result.dart';
 
+import 'restaurant_result_test.mocks.dart';
+
+@GenerateMocks([http.Client])
 void main() {
-  var dummyRestaurant = {
-    "id": "rqdv5juczeskfw1e867",
-    "name": "Melting Pot",
-    "description":
-        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. ...",
-    "pictureId": "14",
-    "city": "Medan",
-    "rating": 4.2
-  };
-
   test('Verify JSON Parsing', () async {
-    GetListRestaurantProvider getListRestaurantProvider =
-        GetListRestaurantProvider(apiService: ApiService());
-    await getListRestaurantProvider.fetchAllRestaurant();
-    var isValidParsed = getListRestaurantProvider.result.restaurants[0].id ==
-        RestaurantResult.fromJson(dummyRestaurant).id;
-    expect(isValidParsed, true);
+    final client = MockClient();
+    var response =
+        '{"error": false, "message": "success", "count": 20, "restaurants": []}';
+    when(client.get(Uri.parse("${ApiService.baseUrl}/list")))
+        .thenAnswer((_) async => http.Response(response, 200));
+    expect(await ApiService(client: client).getListRestaurant(),
+        isA<GetListRestaurantResult>());
   });
 }
