@@ -6,10 +6,13 @@ import 'package:restaurant_app/data/model/get_list_restaurant_result.dart';
 import 'package:restaurant_app/data/model/search_restaurant_result.dart';
 
 class ApiService {
-  static const String _baseUrl = 'https://restaurant-api.dicoding.dev';
+  static const String baseUrl = 'https://restaurant-api.dicoding.dev';
+
+  http.Client client;
+  ApiService({required this.client});
 
   Future<GetListRestaurantResult> getListRestaurant() async {
-    final response = await http.get(Uri.parse('$_baseUrl/list'));
+    final response = await client.get(Uri.parse('$baseUrl/list'));
     if (response.statusCode == 200) {
       return GetListRestaurantResult.fromJson(json.decode(response.body));
     } else {
@@ -18,7 +21,7 @@ class ApiService {
   }
 
   Future<GetDetailRestaurantResult> getDetailRestaurant(id) async {
-    final response = await http.get(Uri.parse('$_baseUrl/detail/$id'));
+    final response = await client.get(Uri.parse('$baseUrl/detail/$id'));
     if (response.statusCode == 200) {
       return GetDetailRestaurantResult.fromJson(json.decode(response.body));
     } else {
@@ -27,7 +30,7 @@ class ApiService {
   }
 
   Future<SearchRestaurantResult> searchRestaurant(query) async {
-    final response = await http.get(Uri.parse('$_baseUrl/search?q=$query'));
+    final response = await client.get(Uri.parse('$baseUrl/search?q=$query'));
     if (response.statusCode == 200) {
       return SearchRestaurantResult.fromJson(json.decode(response.body));
     } else {

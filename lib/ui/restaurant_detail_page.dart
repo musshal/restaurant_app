@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
@@ -17,8 +18,8 @@ class RestaurantDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GetDetailRestaurantProvider>(
-      create: (context) =>
-          GetDetailRestaurantProvider(apiService: ApiService(), id: id),
+      create: (context) => GetDetailRestaurantProvider(
+          apiService: ApiService(client: http.Client()), id: id),
       child: Consumer<GetDetailRestaurantProvider>(
         builder: (context, state, _) {
           if (state.state == ResultState.loading) {
